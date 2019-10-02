@@ -241,28 +241,18 @@ Nodo* verificar(int*** matrizImagen,int*** matrizBuscar,Nodo* cabezal){//n^2*(n^
 		for(int i=0;i<=distanciaFila;i++){//n
 			for(int j=0;j<=distanciaColumna;j++){//n
 				contador=sonIguales(matrizImagen,matrizBuscar,filaBuscar,columnaBuscar,i,j);
-				if(contador!=0){
 					if(estaEnLaLista(cabezal,contador)){
 						buscar(cabezal,contador)->cantidad=buscar(cabezal,contador)->cantidad+1;
 					}
 					else{
 						cabezal=agregarOrdenado(cabezal,crearNodo(contador)); 
 					}
-				}
 				contador=0;
 			}
 		}
 		return cabezal;
 	}
 }
-Nodo* obtenerImagenes(int*** matrizImagen,int*** matrizBusqueda,Nodo* cabezal){
-	//for(int i=0;i<4;i++){//4
-		cabezal=verificar(matrizImagen,matrizBusqueda,cabezal);
-	//	matrizBusqueda=rotar90(matrizBusqueda);
-	//}
-	return cabezal;
-}
-
 double promedio(Nodo* cabezal){
 	int numerador=0;
 	int denominador=0;
@@ -327,8 +317,7 @@ double getDesviacionEstandar(Nodo* cabezal,double promedio){
 	return acum;
 }
 
-void getDatosOrdenados(Nodo* cabezal){
-	printf("promedio= %f \n",promedio(cabezal));
+Nodo* getDatosOrdenados(Nodo* cabezal){
 	 Nodo* aux=cabezal;
 	 Nodo* aux2=NULL;
 	 while(aux->siguiente!=NULL){
@@ -340,14 +329,51 @@ void getDatosOrdenados(Nodo* cabezal){
 	for(int i=0;i<aux->cantidad;i++){
 		aux2=agregarOrdenado(aux2,crearNodo(aux->valor));
 	}
-	liberarNodo(aux2);
+	return aux2;
 }
+
+Nodo* obtenerImagenes(int*** matrizImagen,int*** matrizBusqueda,Nodo* cabezal){
+	
+	for(int i=0;i<4;i++){//4
+		cabezal=verificar(matrizImagen,matrizBusqueda,cabezal);
+		matrizBusqueda=rotar90(matrizBusqueda);
+		printear(cabezal);
+		printf("\n \n");
+	}
+	
+	return cabezal;
+}
+double mediana(Nodo* nodo){
+	int largo=getLargo(nodo);
+	double x=0;
+	if(largo%2==0){
+		return getValor(nodo,largo/2);
+	}
+	else{
+		largo=largo/2;
+		return (((getValor(nodo,(largo+0.5)))-(getValor(nodo,(largo-0.5))))/2);
+	}
+}
+void obtenerDatos(Nodo* nodo){
+	FILE *fptr;
+	fptr = fopen("salida.out","w");
+	Nodo* aux2=getDatosOrdenados(nodo);
+	fprintf(fptr,"Mayor similitud: %d pixeles encontrado %d veces \n",getMayor(nodo),buscar(nodo,getMayor(nodo))->cantidad);
+	fprintf(fptr,"Menor similitud: %d pixeles encontrado %d veces \n",getMenor(nodo),buscar(nodo,getMenor(nodo))->cantidad);
+	fprintf(fptr,"Media %f pixeles\n",promedio(nodo));
+	fprintf(fptr,"Mediana %f pixeles \n",mediana(aux2));
+	fprintf(fptr,"Desviacion estandar: %f \n",getDesviacionEstandar(aux2,promedio(nodo)));
+	
+	fclose(fptr);
+}
+
 
 
 int main(){
 	char* nombreImagen="imagen.in";
 	char* nombreBusqueda ="buscar.in";
 	FILE *fp;
+	
 	Nodo* cabeza=NULL;
 	fp = fopen(nombreImagen, "r"); // read mode
 	fscanf(fp,"%d %d",&columnaImagen,&filaImagen);//se lee el tamaño de la matriz
@@ -358,11 +384,11 @@ int main(){
 	int*** imagen=leer(nombreImagen);
 	int*** buscar=leer(nombreBusqueda);
 	cabeza=obtenerImagenes(imagen,buscar,cabeza);
+	obtenerDatos(cabeza);
+	getDatosOrdenados(cabeza);
 	liberar(filaBuscar,buscar);
 	liberar(filaImagen,imagen);
-	getDatosOrdenados(cabeza);
 	liberarNodo(cabeza);
 	printf(" termino ");
-	
 	return 0;
 }
