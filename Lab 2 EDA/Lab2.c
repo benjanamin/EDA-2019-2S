@@ -2,105 +2,48 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-typedef struct Lista Lista;
+
 typedef struct Nodo Nodo;
 int filaImagen;
 int columnaImagen;
 int filaBuscar;
 int columnaBuscar;
 
-struct Lista{
-	Nodo *cabeza;
-};
 struct Nodo{
 	int valor;
+	int cantidad;
 	Nodo* siguiente;
 };
-
+//crea un nodo
 Nodo* crearNodo(int valor){
 	Nodo* nodo= (Nodo*)malloc(sizeof(Nodo));
 	nodo->siguiente=NULL;
 	nodo->valor=valor;
+	nodo->cantidad=1;
 	return nodo;
 }
-
+//libera la memoria
 void destruirNodo(Nodo *nodo){
 	free(nodo);
 }
-void insertarPrincipio(Lista* inicial,int valor){
-	if(inicial->cabeza==NULL){
-		Nodo* nodo=crearNodo(valor);
-		inicial->cabeza->siguiente=nodo;
+//agrega un nodo al final
+Nodo* agregarNodo(Nodo* cabeza,Nodo* nodo){
+	if(cabeza==NULL){
+		cabeza=nodo;
+		return cabeza;
 	}
 	else{
-		Nodo* nodo= crearNodo(valor);
-		nodo->siguiente=inicial->cabeza;
-		inicial->cabeza=nodo;
-	}
-}
-void insertarFinal(Lista* inicial,int valor){
-	Nodo* nodo=crearNodo(valor);
-	if(inicial->cabeza!=NULL){
+		Nodo* aux=cabeza;
 		
-		Nodo* aux= inicial->cabeza;
 		while(aux->siguiente!=NULL){
 			aux=aux->siguiente;
 		}
 		aux->siguiente=nodo;
-	}
-	else{
-		inicial->cabeza=nodo;
+		return cabeza;
 	}
 }
-void insertarOrdenado(Lista* inicial,int valor){
-	Nodo* nodo=crearNodo(valor);
-	Nodo* aux= inicial->cabeza;
-	Nodo* aux2=aux;
-	if(inicial->cabeza==NULL){
-		inicial->cabeza=nodo;
-	}
-	else{
-		while(aux->siguiente!=NULL){
-			if(aux->valor>valor){
-				nodo->siguiente=aux;
-			}
-			else{
-				
-			}
-			aux=aux->siguiente;
-		}
-	}
-}
-void printear(Lista* inicial){
-	Nodo* aux= inicial->cabeza;
-	while(aux->siguiente!=NULL){
-		printf("%d ",aux->valor);
-		aux=aux->siguiente;
-	}
-	printf("%d",aux->valor);
-}
-void insertarDespuesDeN(Lista* inicial,int valor,int despuesDe){
-	Nodo* nodo=crearNodo(valor);
-	Nodo* aux= inicial->cabeza;
-	if(inicial->cabeza==NULL){
-		inicial->cabeza=nodo;
-	}
-	else{
-		while(aux->valor!=despuesDe){
-			if(aux->siguiente!=NULL){
-				aux=aux->siguiente;
-			}
-			else{
-				break;
-			}
-		}
-		nodo->siguiente=aux->siguiente;
-		aux->siguiente=nodo;
-	}
-}
-
-int estaEnLaLista(Lista* inicial,int valor){
-	Nodo* aux=inicial->cabeza;
+int estaEnLaLista(Nodo* inicial,int valor){
+	Nodo* aux=inicial;
 	if(inicial!=NULL){
 		while(aux->siguiente!=NULL){
 			if(aux->valor==valor){
@@ -109,26 +52,86 @@ int estaEnLaLista(Lista* inicial,int valor){
 			aux=aux->siguiente;
 			
 		}
+		if(aux->valor==valor){
+			return 1;
+		}
 		return 0;
 	}
 	else{
 		return 0;
 	}
 }
-int obtenerTamano(Lista* lista){
-	Nodo* aux=lista->cabeza;
-	int contador=0;
-	if(lista==NULL){
-		return 0;
+
+//imprime todos los valor3es de la lista
+void printear(Nodo* inicial){
+	Nodo* aux= inicial;
+	while(aux->siguiente!=NULL){
+		printf("%d ",aux->valor);
+		aux=aux->siguiente;
+	}
+	printf("%d",aux->valor);
+}
+
+Nodo* buscar(Nodo* cabezal,int valor){
+	if(cabezal==NULL){
+		return NULL;
 	}
 	else{
-		contador+=1;
+		Nodo* aux= cabezal;
 		while(aux->siguiente!=NULL){
-			contador+=1;
+			if(aux->valor==valor){
+				return aux;
+			}
 			aux=aux->siguiente;
 		}
+		if(aux->valor==valor){
+			return aux;
+		}
+		else{
+			return NULL;
+		}
 	}
+}
+int getLargo(Nodo* cabezal){
+	Nodo* aux= cabezal;
+	int contador=0;
+	while(aux->siguiente!=NULL){
+		contador+=1;
+		aux=aux->siguiente;
+	}
+	contador+=1;
 	return contador;
+}
+
+Nodo* agregarOrdenado(Nodo* cabezal,Nodo* nodo){
+	if(cabezal==NULL){
+		return nodo;
+	}
+	else{
+		Nodo* aux=cabezal;
+		while(aux->siguiente!=NULL){
+			if(nodo->valor<cabezal->valor){
+				nodo->siguiente=cabezal;
+				return nodo;
+			}
+			else{
+				if(aux->siguiente->valor>nodo->valor){
+					nodo->siguiente=aux->siguiente;
+					aux->siguiente=nodo;
+					return cabezal;
+				}
+				else{
+					aux=aux->siguiente;
+				}
+			}
+		}
+		if(nodo->valor<cabezal->valor){
+				nodo->siguiente=cabezal;
+				return nodo;
+			}
+		aux->siguiente=nodo;
+		return cabezal;
+	}
 }
 
 int*** leer(char* Nombre){//se encarga de leer la matriz, primero lee el ancho y luego la altura para asi crear una matriz
@@ -207,39 +210,51 @@ int sonIguales(int*** matriz1,int*** matriz2,int m,int n, int mInicial , int nIn
 			} 
 		}
 	}
-	return aux;;
+
+	return aux;
 }
 //Cuenta cuantas veces esta la matrizBuscar en matrizImagen
-int verificar(int*** matrizImagen,int*** matrizBuscar){//n^2*(n^2+nc+c)=n
+Nodo* verificar(int*** matrizImagen,int*** matrizBuscar,Nodo* cabezal){//n^2*(n^2+nc+c)=n
 	int distanciaFila=filaImagen-filaBuscar;//c
 	int distanciaColumna=columnaImagen-columnaBuscar;//c
 	int contador=0;//c
 	
 	if(distanciaFila<0||distanciaColumna<0){//c
-		return 0;
+		return cabezal;
 	}
 	else{
 		for(int i=0;i<=distanciaFila;i++){//n
 			for(int j=0;j<=distanciaColumna;j++){//n
-				if(sonIguales(matrizImagen,matrizBuscar,filaBuscar,columnaBuscar,i,j)==1){// n^2+nc+c
-					contador+=1;//c
+				contador=sonIguales(matrizImagen,matrizBuscar,filaBuscar,columnaBuscar,i,j);
+				if(contador!=0){
+					if(estaEnLaLista(cabezal,contador)){
+						buscar(cabezal,contador)->cantidad=buscar(cabezal,contador)->cantidad+1;
+					}
+					else{
+						cabezal=agregarOrdenado(cabezal,crearNodo(contador)); 
+					}
 				}
+				contador=0;
+				printear(cabezal);
+				printf("\n");
 			}
 		}
-		return contador;
+		return cabezal;
 	}
 }
-void obtenerImagenes(int*** matrizImagen,int*** matrizBusqueda){
+Nodo* obtenerImagenes(int*** matrizImagen,int*** matrizBusqueda,Nodo* cabezal){
 	for(int i=0;i<4;i++){//4
-		printf("Cantidad para rotacion %d: %d \n",i*90,verificar(matrizImagen,matrizBusqueda));
+		cabezal=verificar(matrizImagen,matrizBusqueda,cabezal);
 		matrizBusqueda=rotar90(matrizBusqueda);
 	}
+	return cabezal;
 }
 
 int main(){
 	char* nombreImagen="imagen.in";
 	char* nombreBusqueda ="buscar.in";
 	FILE *fp;
+	Nodo* cabeza=NULL;
 	fp = fopen(nombreImagen, "r"); // read mode
 	fscanf(fp,"%d %d",&columnaImagen,&filaImagen);//se lee el tamaño de la matriz
 	fclose(fp);
@@ -248,7 +263,8 @@ int main(){
 	fclose(fp);
 	int*** imagen=leer(nombreImagen);
 	int*** buscar=leer(nombreBusqueda);
-	obtenerImagenes(imagen,buscar);
+	cabeza=obtenerImagenes(imagen,buscar,cabeza);
+	printear(cabeza);
 	liberar(filaBuscar,buscar);
 	liberar(filaImagen,imagen);
 
