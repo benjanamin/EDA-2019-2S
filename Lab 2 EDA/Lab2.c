@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 typedef struct Nodo Nodo;
 int filaImagen;
@@ -101,6 +102,20 @@ int getLargo(Nodo* cabezal){
 	}
 	contador+=1;
 	return contador;
+}
+int getValor(Nodo* cabezal,int numero){
+	Nodo* aux= cabezal;
+	int contador=1;
+	while(contador!=numero){
+		if(cabezal==NULL){
+			return 0;
+		}
+		else{
+			aux=aux->siguiente;
+			contador+=1;
+		}
+	}
+	return aux->valor;
 }
 
 Nodo* agregarOrdenado(Nodo* cabezal,Nodo* nodo){
@@ -235,20 +250,99 @@ Nodo* verificar(int*** matrizImagen,int*** matrizBuscar,Nodo* cabezal){//n^2*(n^
 					}
 				}
 				contador=0;
-				printear(cabezal);
-				printf("\n");
 			}
 		}
 		return cabezal;
 	}
 }
 Nodo* obtenerImagenes(int*** matrizImagen,int*** matrizBusqueda,Nodo* cabezal){
-	for(int i=0;i<4;i++){//4
+	//for(int i=0;i<4;i++){//4
 		cabezal=verificar(matrizImagen,matrizBusqueda,cabezal);
-		matrizBusqueda=rotar90(matrizBusqueda);
-	}
+	//	matrizBusqueda=rotar90(matrizBusqueda);
+	//}
 	return cabezal;
 }
+
+double promedio(Nodo* cabezal){
+	int numerador=0;
+	int denominador=0;
+	Nodo* aux=cabezal;
+	
+	while(aux->siguiente!=NULL){
+		numerador=numerador+aux->valor*aux->cantidad;
+		denominador=denominador+aux->cantidad;
+		aux=aux->siguiente;
+	}
+	numerador=numerador+aux->valor*aux->cantidad;
+	denominador=denominador+aux->cantidad;
+	return numerador/denominador;
+}
+int getMayor(Nodo *nodo){
+	int mayor=0;
+	Nodo* aux=nodo;
+	while(aux->siguiente!=NULL){
+		if(aux->valor>mayor){
+			mayor=aux->valor;
+		}
+		aux=aux->siguiente;
+	}
+	if(aux->valor>mayor){
+		mayor=aux->valor;
+	}
+	return mayor;
+}
+int getMenor(Nodo *nodo){
+	int menor=999999;
+	Nodo* aux=nodo;
+	while(aux->siguiente!=NULL){
+		if(aux->valor<menor){
+			menor=aux->valor;
+		}
+		aux=aux->siguiente;
+	}
+	if(aux->valor<menor){
+		menor=aux->valor;
+	}
+	return menor;
+}
+
+void liberarNodo(Nodo* cabezal){
+	Nodo* aux=cabezal;
+	while(aux->siguiente!=NULL){
+		aux=aux->siguiente;
+		free(cabezal);
+		cabezal=aux;
+	}
+	free(aux);
+}
+double getDesviacionEstandar(Nodo* cabezal,double promedio){
+	Nodo* aux=cabezal;
+	double acum=0;
+	while(aux->siguiente!=NULL){
+		acum=acum+(abs(aux->valor-promedio)^2);
+		aux=aux->siguiente;
+	}
+	acum=acum+(abs(aux->valor-promedio)^2);
+	acum=(sqrt(acum)/getLargo(cabezal));
+	return acum;
+}
+
+void getDatosOrdenados(Nodo* cabezal){
+	printf("promedio= %f \n",promedio(cabezal));
+	 Nodo* aux=cabezal;
+	 Nodo* aux2=NULL;
+	 while(aux->siguiente!=NULL){
+	 	for(int i=0;i<aux->cantidad;i++){
+	 		aux2=agregarOrdenado(aux2,crearNodo(aux->valor));
+		 }
+		 aux=aux->siguiente;	 	
+	 }
+	for(int i=0;i<aux->cantidad;i++){
+		aux2=agregarOrdenado(aux2,crearNodo(aux->valor));
+	}
+	liberarNodo(aux2);
+}
+
 
 int main(){
 	char* nombreImagen="imagen.in";
@@ -264,10 +358,11 @@ int main(){
 	int*** imagen=leer(nombreImagen);
 	int*** buscar=leer(nombreBusqueda);
 	cabeza=obtenerImagenes(imagen,buscar,cabeza);
-	printear(cabeza);
 	liberar(filaBuscar,buscar);
 	liberar(filaImagen,imagen);
-
+	getDatosOrdenados(cabeza);
+	liberarNodo(cabeza);
+	printf(" termino ");
 	
 	return 0;
 }
