@@ -16,49 +16,49 @@ struct Nodo{
 	Nodo* siguiente;
 };
 //crea un nodo
-Nodo* crearNodo(int valor){
-	Nodo* nodo= (Nodo*)malloc(sizeof(Nodo));
-	nodo->siguiente=NULL;
-	nodo->valor=valor;
-	nodo->cantidad=1;
-	return nodo;
+Nodo* crearNodo(int valor){//5c
+	Nodo* nodo= (Nodo*)malloc(sizeof(Nodo));//c
+	nodo->siguiente=NULL;//c
+	nodo->valor=valor;//c
+	nodo->cantidad=1;//c
+	return nodo;//c
 }
 //libera la memoria
 void destruirNodo(Nodo *nodo){
 	free(nodo);
 }
 //agrega un nodo al final
-Nodo* agregarNodo(Nodo* cabeza,Nodo* nodo){
-	if(cabeza==NULL){
+Nodo* agregarNodo(Nodo* cabeza,Nodo* nodo){//(n-1)c+3c
+	if(cabeza==NULL){//3c
 		cabeza=nodo;
 		return cabeza;
 	}
 	else{
-		Nodo* aux=cabeza;
+		Nodo* aux=cabeza;//c
 		
-		while(aux->siguiente!=NULL){
-			aux=aux->siguiente;
+		while(aux->siguiente!=NULL){//n-1
+			aux=aux->siguiente;//c
 		}
-		aux->siguiente=nodo;
-		return cabeza;
+		aux->siguiente=nodo;//c
+		return cabeza;//c
 	}
 }
-int estaEnLaLista(Nodo* inicial,int valor){
-	Nodo* aux=inicial;
-	if(inicial!=NULL){
-		while(aux->siguiente!=NULL){
-			if(aux->valor==valor){
-				return 1;
+int estaEnLaLista(Nodo* inicial,int valor){//c+c+(n-1)3c +2c+c
+	Nodo* aux=inicial;//c
+	if(inicial!=NULL){//c
+		while(aux->siguiente!=NULL){//(n-1)
+			if(aux->valor==valor){//c
+				return 1;//c
 			}
-			aux=aux->siguiente;
+			aux=aux->siguiente; //c
 			
 		}
-		if(aux->valor==valor){
+		if(aux->valor==valor){//2c
 			return 1;
 		}
-		return 0;
+		return 0;//c
 	}
-	else{
+	else{//c
 		return 0;
 	}
 }
@@ -73,19 +73,19 @@ void printear(Nodo* inicial){
 	printf("%d",aux->valor);
 }
 
-Nodo* buscar(Nodo* cabezal,int valor){
+Nodo* buscar(Nodo* cabezal,int valor){//c+(n-1)3c+2c
 	if(cabezal==NULL){
 		return NULL;
 	}
 	else{
-		Nodo* aux= cabezal;
-		while(aux->siguiente!=NULL){
-			if(aux->valor==valor){
+		Nodo* aux= cabezal;//c
+		while(aux->siguiente!=NULL){//n-1
+			if(aux->valor==valor){//2c
 				return aux;
 			}
-			aux=aux->siguiente;
+			aux=aux->siguiente;//c
 		}
-		if(aux->valor==valor){
+		if(aux->valor==valor){//2c
 			return aux;
 		}
 		else{
@@ -93,54 +93,54 @@ Nodo* buscar(Nodo* cabezal,int valor){
 		}
 	}
 }
-int getLargo(Nodo* cabezal){
-	Nodo* aux= cabezal;
-	int contador=0;
-	while(aux->siguiente!=NULL){
-		contador+=1;
-		aux=aux->siguiente;
+int getLargo(Nodo* cabezal){//2c+(n-1)c+2c
+	Nodo* aux= cabezal;//c
+	int contador=0;//c
+	while(aux->siguiente!=NULL){//n-1
+		contador+=1;//c
+		aux=aux->siguiente;//c
 	}
-	contador+=1;
-	return contador;
+	contador+=1;//c
+	return contador;//c
 }
-int getValor(Nodo* cabezal,int numero){
-	Nodo* aux= cabezal;
-	int contador=1;
-	while(contador!=numero){
-		if(cabezal==NULL){
-			return 0;
+int getValor(Nodo* cabezal,int numero){//3c+2cn
+	Nodo* aux= cabezal;//c
+	int contador=1;//c
+	while(contador!=numero){//n
+		if(cabezal==NULL){//c
+			return -1;//c
 		}
 		else{
-			aux=aux->siguiente;
-			contador+=1;
+			aux=aux->siguiente;//c
+			contador+=1;//c
 		}
 	}
-	return aux->valor;
+	return aux->valor;//c
 }
 
-Nodo* agregarOrdenado(Nodo* cabezal,Nodo* nodo){
+Nodo* agregarOrdenado(Nodo* cabezal,Nodo* nodo){//6c+(n-1)4c
 	if(cabezal==NULL){
 		return nodo;
 	}
 	else{
-		Nodo* aux=cabezal;
-		while(aux->siguiente!=NULL){
-			if(nodo->valor<cabezal->valor){
-				nodo->siguiente=cabezal;
-				return nodo;
+		Nodo* aux=cabezal;//c
+		while(aux->siguiente!=NULL){//n-1
+			if(nodo->valor>cabezal->valor){//c
+				nodo->siguiente=cabezal;//c
+				return nodo;//c
 			}
 			else{
-				if(aux->siguiente->valor>nodo->valor){
-					nodo->siguiente=aux->siguiente;
-					aux->siguiente=nodo;
-					return cabezal;
+				if(aux->siguiente->valor<nodo->valor){//c
+					nodo->siguiente=aux->siguiente;//c
+					aux->siguiente=nodo;//c
+					return cabezal;//c
 				}
 				else{
-					aux=aux->siguiente;
+					aux=aux->siguiente;//c
 				}
 			}
 		}
-		if(nodo->valor<cabezal->valor){
+		if(nodo->valor>cabezal->valor){
 				nodo->siguiente=cabezal;
 				return nodo;
 			}
@@ -242,10 +242,10 @@ Nodo* verificar(int*** matrizImagen,int*** matrizBuscar,Nodo* cabezal){//n^2*(n^
 			for(int j=0;j<=distanciaColumna;j++){//n
 				contador=sonIguales(matrizImagen,matrizBuscar,filaBuscar,columnaBuscar,i,j);
 					if(estaEnLaLista(cabezal,contador)){
-						buscar(cabezal,contador)->cantidad=buscar(cabezal,contador)->cantidad+1;
+						buscar(cabezal,contador)->cantidad=buscar(cabezal,contador)->cantidad+1;//(n-1)
 					}
 					else{
-						cabezal=agregarOrdenado(cabezal,crearNodo(contador)); 
+						cabezal=agregarOrdenado(cabezal,crearNodo(contador)); //n^2+nc
 					}
 				contador=0;
 			}
@@ -253,47 +253,47 @@ Nodo* verificar(int*** matrizImagen,int*** matrizBuscar,Nodo* cabezal){//n^2*(n^
 		return cabezal;
 	}
 }
-double promedio(Nodo* cabezal){
-	int numerador=0;
-	int denominador=0;
-	Nodo* aux=cabezal;
+double promedio(Nodo* cabezal){//6c+(n-1)3c
+	int numerador=0;//c
+	int denominador=0;//c
+	Nodo* aux=cabezal;//c
 	
-	while(aux->siguiente!=NULL){
-		numerador=numerador+aux->valor*aux->cantidad;
-		denominador=denominador+aux->cantidad;
-		aux=aux->siguiente;
+	while(aux->siguiente!=NULL){//n-1
+		numerador=numerador+aux->valor*aux->cantidad;//c
+		denominador=denominador+aux->cantidad;//c
+		aux=aux->siguiente;//c
 	}
-	numerador=numerador+aux->valor*aux->cantidad;
-	denominador=denominador+aux->cantidad;
-	return numerador/denominador;
+	numerador=numerador+aux->valor*aux->cantidad;//c
+	denominador=denominador+aux->cantidad;//c
+	return numerador/denominador;//c
 }
 int getMayor(Nodo *nodo){
-	int mayor=0;
-	Nodo* aux=nodo;
-	while(aux->siguiente!=NULL){
-		if(aux->valor>mayor){
-			mayor=aux->valor;
+	int mayor=0;//c
+	Nodo* aux=nodo;//c
+	while(aux->siguiente!=NULL){//(n-1)
+		if(aux->valor>mayor){//c
+			mayor=aux->valor;//c
 		}
-		aux=aux->siguiente;
+		aux=aux->siguiente;//c
 	}
-	if(aux->valor>mayor){
-		mayor=aux->valor;
+	if(aux->valor>mayor){//c
+		mayor=aux->valor;//c
 	}
-	return mayor;
+	return mayor;//c
 }
 int getMenor(Nodo *nodo){
-	int menor=999999;
-	Nodo* aux=nodo;
-	while(aux->siguiente!=NULL){
-		if(aux->valor<menor){
-			menor=aux->valor;
+	int menor=999999;//c
+	Nodo* aux=nodo;//c
+	while(aux->siguiente!=NULL){//n-1
+		if(aux->valor<menor){//c
+			menor=aux->valor;//c
 		}
-		aux=aux->siguiente;
+		aux=aux->siguiente;//c
 	}
-	if(aux->valor<menor){
-		menor=aux->valor;
+	if(aux->valor<menor){//c
+		menor=aux->valor;//c
 	}
-	return menor;
+	return menor;//c
 }
 
 void liberarNodo(Nodo* cabezal){
@@ -305,29 +305,29 @@ void liberarNodo(Nodo* cabezal){
 	}
 	free(aux);
 }
-double getDesviacionEstandar(Nodo* cabezal,double promedio){
+double getDesviacionEstandar(Nodo* cabezal,double promedio){//n-1
 	Nodo* aux=cabezal;
 	double acum=0;
-	while(aux->siguiente!=NULL){
-		acum=acum+(abs(aux->valor-promedio)^2);
-		aux=aux->siguiente;
+	while(aux->siguiente!=NULL){//n-1
+		acum=acum+(abs(aux->valor-promedio)^2);//c
+		aux=aux->siguiente;//c
 	}
-	acum=acum+(abs(aux->valor-promedio)^2);
-	acum=(sqrt(acum)/getLargo(cabezal));
+	acum=acum+(abs(aux->valor-promedio)^2);//c
+	acum=(sqrt(acum)/getLargo(cabezal));//c
 	return acum;
 }
 
-Nodo* getDatosOrdenados(Nodo* cabezal){
-	 Nodo* aux=cabezal;
-	 Nodo* aux2=NULL;
-	 while(aux->siguiente!=NULL){
-	 	for(int i=0;i<aux->cantidad;i++){
-	 		aux2=agregarOrdenado(aux2,crearNodo(aux->valor));
+Nodo* getDatosOrdenados(Nodo* cabezal){//2c+(n-1)(n-1)+n(n-1)
+	 Nodo* aux=cabezal;//c
+	 Nodo* aux2=NULL;//c
+	 while(aux->siguiente!=NULL){//n-1
+	 	for(int i=0;i<aux->cantidad;i++){//c
+	 		aux2=agregarOrdenado(aux2,crearNodo(aux->valor));//n-1
 		 }
 		 aux=aux->siguiente;	 	
 	 }
-	for(int i=0;i<aux->cantidad;i++){
-		aux2=agregarOrdenado(aux2,crearNodo(aux->valor));
+	for(int i=0;i<aux->cantidad;i++){//n
+		aux2=agregarOrdenado(aux2,crearNodo(aux->valor));//n-1
 	}
 	return aux2;
 }
@@ -337,8 +337,7 @@ Nodo* obtenerImagenes(int*** matrizImagen,int*** matrizBusqueda,Nodo* cabezal){
 	for(int i=0;i<4;i++){//4
 		cabezal=verificar(matrizImagen,matrizBusqueda,cabezal);
 		matrizBusqueda=rotar90(matrizBusqueda);
-		printear(cabezal);
-		printf("\n \n");
+
 	}
 	
 	return cabezal;
@@ -351,12 +350,15 @@ double mediana(Nodo* nodo){
 	}
 	else{
 		largo=largo/2;
-		return (((getValor(nodo,(largo+0.5)))-(getValor(nodo,(largo-0.5))))/2);
+		return (((getValor(nodo,(largo+0.5)))-(getValor(nodo,(largo-0.5))))/2);//2*2n
 	}
 }
+
 void obtenerDatos(Nodo* nodo){
+	
 	FILE *fptr;
 	fptr = fopen("salida.out","w");
+	printear(nodo);
 	Nodo* aux2=getDatosOrdenados(nodo);
 	fprintf(fptr,"Mayor similitud: %d pixeles encontrado %d veces \n",getMayor(nodo),buscar(nodo,getMayor(nodo))->cantidad);
 	fprintf(fptr,"Menor similitud: %d pixeles encontrado %d veces \n",getMenor(nodo),buscar(nodo,getMenor(nodo))->cantidad);
@@ -370,8 +372,8 @@ void obtenerDatos(Nodo* nodo){
 
 
 int main(){
-	char* nombreImagen="imagen.in";
-	char* nombreBusqueda ="buscar.in";
+	char* nombreImagen="imagen2.in";
+	char* nombreBusqueda ="buscar2.in";
 	FILE *fp;
 	
 	Nodo* cabeza=NULL;
@@ -383,9 +385,12 @@ int main(){
 	fclose(fp);
 	int*** imagen=leer(nombreImagen);
 	int*** buscar=leer(nombreBusqueda);
+	int cantidad=columnaImagen*filaImagen+columnaBuscar*filaBuscar;
 	cabeza=obtenerImagenes(imagen,buscar,cabeza);
+  	getDatosOrdenados(cabeza);
 	obtenerDatos(cabeza);
 	getDatosOrdenados(cabeza);
+	
 	liberar(filaBuscar,buscar);
 	liberar(filaImagen,imagen);
 	liberarNodo(cabeza);
